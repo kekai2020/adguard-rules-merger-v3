@@ -6,8 +6,8 @@
 timeout: 60
 max_concurrency: 50
 allow_overrides_block: true
-enable_normalized_dedup: false
-strip_www: false
+enable_normalized_dedup: true
+strip_www: true
 
 # ── Cache settings ──────────────────────────────────────────────────
 cache:
