@@ -60,6 +60,14 @@ jobs:
           restore-keys: |
             rule-cache-v3-
 
+      - name: Debug environment
+        run: |
+          echo "Current directory: $(pwd)"
+          echo "PYTHONPATH: $PYTHONPATH"
+          ls -la
+          ls -la merger/
+          python -c "import sys; print('sys.path:', sys.path[:3])"
+
       - name: Run merge
         id: merge
         env:
