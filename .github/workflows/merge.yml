@@ -1,3 +1,7 @@
+concurrency:
+  group: merge-rules-${{ github.ref }}
+  cancel-in-progress: false
+  
 name: Merge Rules (V3)
 
 on:
