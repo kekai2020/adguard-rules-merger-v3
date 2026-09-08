@@ -2,7 +2,7 @@ name: Merge Rules (V3)
 
 on:
   schedule:
-    - cron: '0 */6 * * *'  # every 6 hours
+    - cron: '0 */6 * * *'
   workflow_dispatch:
   push:
     branches: [main]
@@ -11,20 +11,24 @@ on:
       - 'merger/**'
       - 'merge_rules.py'
       - 'config_loader.py'
+      - 'requirements.txt'
       - '.github/workflows/merge.yml'
 
 permissions:
   contents: write
 
-# 避免重复运行：同一分支的新运行会取消旧运行
+# 避免同一分支的重复运行
 concurrency:
   group: merge-rules-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  PYTHONUNBUFFERED: "1"
+
 jobs:
   merge:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 10
 
     steps:
       - name: Checkout
@@ -42,98 +46,75 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          echo "=== Environment info ==="
-          python --version
-          pip --version
-          echo "=== Installed packages ==="
-          pip list | grep -iE "aiohttp|pydantic|typer|rich|yaml|structlog"
 
+      # 关键修复：使用 PYTHONPATH + 模块导入方式执行
       - name: Validate config
+        env:
+          PYTHONPATH: ${{ github.workspace }}
         run: |
-          python merge_rules.py validate config/sources.yaml
+          python -c "from merge_rules import app; app()" validate config/sources.yaml
 
-      # 注意：actions/cache 会在 job 结束的 post 阶段自动保存缓存，
-      # 不需要显式的 "Save cache" 步骤。
-      - name: Restore cache
+      - name: Restore rule cache
         uses: actions/cache@v4
         with:
           path: cache/
-          # 使用稳定的缓存键前缀，避免每次 run_id 都失效
           key: rule-cache-v3-${{ hashFiles('config/sources.yaml') }}
           restore-keys: |
             rule-cache-v3-
 
-      - name: Run merge (V3 async)
+      - name: Run merge
         id: merge
+        env:
+          PYTHONPATH: ${{ github.workspace }}
         run: |
           echo "::group::Merge Output"
-          python merge_rules.py merge \
+          python -c "from merge_rules import app; app()" merge \
             --config config/sources.yaml \
             --output output/merged_rules.txt \
             --report \
             --report-format markdown \
             --compress \
             --cache-dir cache \
-            --cache-max-size 500 \
-            --timeout 60 \
-            --verbose
+            --cache-max-size 500
           echo "::endgroup::"
-        # Don't fail immediately — allow artifact upload for debugging
-        continue-on-error: true
-
-      - name: Upload artifacts (debug)
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: merged-rules-${{ github.run_id }}
-          path: |
-            output/
-            merge_error.log
-            cache/
-          retention-days: 30
 
       - name: Check for changes
         id: changes
-        if: steps.merge.outcome == 'success'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          # 检测 output 目录是否有变更（包括修改和新增文件）
           CHANGED=false
           if ! git diff --quiet -- output/ 2>/dev/null; then
             CHANGED=true
-            echo "Detected modified files in output/"
+            echo "Modified files detected in output/"
           fi
           if git ls-files --others --exclude-standard -- output/ | grep -q .; then
             CHANGED=true
-            echo "Detected new files in output/"
+            echo "New files detected in output/"
           fi
 
-          if [ "$CHANGED" = "true" ]; then
-            echo "changed=true" >> $GITHUB_OUTPUT
-            echo "Rules changed, will commit"
-          else
-            echo "changed=false" >> $GITHUB_OUTPUT
-            echo "No changes in merged rules"
-          fi
+          echo "changed=$CHANGED" >> "$GITHUB_OUTPUT"
 
       - name: Commit and push
         if: steps.changes.outputs.changed == 'true'
         run: |
           git add output/
           git commit -m "Auto-merge: update rules $(date -u +'%Y-%m-%d %H:%M UTC')" || echo "Nothing to commit"
-          git push || echo "Push failed"
+          git push
 
-      - name: Fail if merge failed
-        if: steps.merge.outcome == 'failure'
-        run: |
-          echo "::error::Merge step failed. Check uploaded artifacts and logs for details."
-          echo "=== Debug info ==="
-          ls -la output/ 2>/dev/null || echo "output/ does not exist"
-          ls -la cache/ 2>/dev/null || echo "cache/ does not exist"
-          cat merge_error.log 2>/dev/null || echo "No error log"
-          exit 1
+      - name: Upload artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: merged-rules-${{ github.run_id }}
+          path: |
+            output/merged_rules.txt
+            output/merged_rules.txt.gz
+            output/stats.json
+            output/*.report.md
+          retention-days: 30
+          if-no-files-found: ignore
 
   test:
     runs-on: ubuntu-latest
@@ -153,17 +134,9 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install pytest pytest-asyncio pytest-benchmark
 
       - name: Run tests
         run: |
           echo "::group::Test Output"
           python -m pytest tests/test_core.py -v --tb=short
-          echo "::endgroup::"
-
-      - name: Run benchmark (quick)
-        run: |
-          echo "::group::Benchmark Output"
-          python -m pytest tests/benchmark.py --benchmark-only \
-            --benchmark-columns=min,max,mean,stddev,ops -q || echo "Benchmark skipped"
           echo "::endgroup::"
