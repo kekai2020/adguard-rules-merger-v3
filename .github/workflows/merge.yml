@@ -46,7 +46,6 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      # 使用 PYTHONPATH + 模块导入方式执行，根治相对导入错误
       - name: Validate config
         env:
           PYTHONPATH: ${{ github.workspace }}
@@ -100,7 +99,6 @@ jobs:
         run: |
           git add output/
           git commit -m "Auto-merge: update rules $(date -u +'%Y-%m-%d %H:%M UTC')" || echo "Nothing to commit"
-          # Pull latest changes before push to avoid "behind" errors
           git pull --rebase origin main || true
           git push
 
