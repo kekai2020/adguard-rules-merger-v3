@@ -13,7 +13,7 @@ strip_www: true
 cache:
   enabled: true
   directory: cache
-  ttl_seconds: 0          # 0 = no time-based expiry
+  ttl_seconds: 43200      # 0 = no time-based expiry
   max_size_mb: 500        # 0 = unlimited
 
 # ── Output settings ─────────────────────────────────────────────────
