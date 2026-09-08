@@ -67,7 +67,14 @@ jobs:
           PYTHONPATH: ${{ github.workspace }}
         run: |
           echo "::group::Merge Output"
-          python -c "from merge_rules import app; app()" merge             --config config/sources.yaml             --output output/merged_rules.txt             --report             --report-format markdown             --compress             --cache-dir cache             --cache-max-size 500
+          python -c "from merge_rules import app; app()" merge \
+            --config config/sources.yaml \
+            --output output/merged_rules.txt \
+            --report \
+            --report-format markdown \
+            --compress \
+            --cache-dir cache \
+            --cache-max-size 500
           echo "::endgroup::"
 
       - name: Check for changes
