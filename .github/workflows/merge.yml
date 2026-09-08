@@ -17,7 +17,6 @@ on:
 permissions:
   contents: write
 
-# 避免同一分支的重复运行
 concurrency:
   group: merge-rules-${{ github.ref }}
   cancel-in-progress: true
@@ -47,7 +46,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      # 关键修复：使用 PYTHONPATH + 模块导入方式执行，根治相对导入错误
+      # 使用 PYTHONPATH + 模块导入方式执行，根治相对导入错误
       - name: Validate config
         env:
           PYTHONPATH: ${{ github.workspace }}
@@ -58,7 +57,6 @@ jobs:
         uses: actions/cache@v4
         with:
           path: cache/
-          # 基于 config 文件 hash 的缓存键，跨运行共享缓存
           key: rule-cache-v3-${{ hashFiles('config/sources.yaml') }}
           restore-keys: |
             rule-cache-v3-
@@ -69,14 +67,7 @@ jobs:
           PYTHONPATH: ${{ github.workspace }}
         run: |
           echo "::group::Merge Output"
-          python -c "from merge_rules import app; app()" merge \
-            --config config/sources.yaml \
-            --output output/merged_rules.txt \
-            --report \
-            --report-format markdown \
-            --compress \
-            --cache-dir cache \
-            --cache-max-size 500
+          python -c "from merge_rules import app; app()" merge             --config config/sources.yaml             --output output/merged_rules.txt             --report             --report-format markdown             --compress             --cache-dir cache             --cache-max-size 500
           echo "::endgroup::"
 
       - name: Check for changes
@@ -102,6 +93,8 @@ jobs:
         run: |
           git add output/
           git commit -m "Auto-merge: update rules $(date -u +'%Y-%m-%d %H:%M UTC')" || echo "Nothing to commit"
+          # Pull latest changes before push to avoid "behind" errors
+          git pull --rebase origin main || true
           git push
 
       - name: Upload artifacts
