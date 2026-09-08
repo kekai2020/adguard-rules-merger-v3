@@ -76,7 +76,7 @@ def _build_output_content(rules, stats: dict | None = None) -> str:
             f" conflict_resolved={stats.get('conflict_resolved', 0)}\n"
         )
     lines.append("!\n")
-    for rule in rules:
+    for rule in sorted(rules):
         lines.append(f"{rule}\n")
     return "".join(lines)
 
