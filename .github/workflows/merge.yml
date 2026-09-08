@@ -79,7 +79,18 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git pull origin main --no-rebase || true
+          
+          # 暂存本地 output 修改
+          git add output/
+          git stash push -m "auto-merge-output"
+          
+          # 拉取远程最新（工作目录干净，不会冲突）
+          git pull origin main --rebase
+          
+          # 恢复 stash（output 文件由脚本生成，通常不会与远程冲突）
+          git stash pop || true
+          
+          # 重新提交
           git add output/
           git commit -m "Auto-merge: update rules $(date -u +'%Y-%m-%d %H:%M UTC')" || echo "Nothing to commit"
           git push
