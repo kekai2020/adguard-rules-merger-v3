@@ -39,7 +39,7 @@ jobs:
 
       - name: Validate config
         run: |
-          python merge_rules.py validate config/sources.yaml
+          python -m merge_rules validate config/sources.yaml
 
       - name: Restore cache
         uses: actions/cache@v4
@@ -52,7 +52,7 @@ jobs:
       - name: Run merge (V3 async)
         run: |
           echo "::group::Merge Output"
-          python merge_rules.py merge \
+          python -m merge_rules merge \
             --config config/sources.yaml \
             --output output/merged_rules.txt \
             --report \
