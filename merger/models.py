@@ -123,6 +123,18 @@ class Rule:
     def __hash__(self) -> int:
         return hash((self._norm, self.rule_type, self.wildcard))
 
+    # ── ordering (for sorted()) ────────────────────────────────
+
+    def __lt__(self, other: "Rule") -> bool:
+        """Less-than comparison for sorting.
+        
+        Uses output_raw (canonical AdGuard format) so that sorted order
+        matches what gets written to the output file.
+        """
+        if not isinstance(other, Rule):
+            return NotImplemented
+        return self.output_raw < other.output_raw
+  
     # ── string representation ──────────────────────────────────
 
     def __str__(self) -> str:
