@@ -1,6 +1,6 @@
 # AdGuard Rules Merge Report (V3)
 
-**Generated:** 2026-09-08 08:00:07 UTC
+**Generated:** 2026-09-08 08:01:42 UTC
 
 ## Summary
 
@@ -11,7 +11,7 @@
 | Deduplication rate | 20.3% |
 | Sources loaded | 14 / 14 |
 | Sources from cache | 14 |
-| Processing time | 23.29s |
+| Processing time | 22.09s |
 | Exact merges | 669,755 |
 | Normalized merges | 0 |
 | Wildcard removals | 32 |
