@@ -1,15 +1,5 @@
 #!/usr/bin/env python3
-"""V3 CLI for merging AdGuard rules — typer + rich powered.
-
-Usage:
-  python merge_rules.py --config config/sources.yaml
-  python merge_rules.py -s URL1 URL2 -o output.txt --report
-  python merge_rules.py --config config/sources.yaml --dry-run
-  python merge_rules.py --init                    # generate default config
-  python merge_rules.py --validate config/sources.yaml
-  python merge_rules.py --cache-stats             # show cache statistics
-  python merge_rules.py --cache-clear             # clear all cache
-"""
+"""V3 CLI for merging AdGuard rules — typer + rich powered."""
 
 from __future__ import annotations
 
@@ -35,8 +25,6 @@ from rich.progress import (
 )
 from rich.table import Table
 
-sys.path.insert(0, str(Path(__file__).parent))
-
 from merger import (
     AsyncRuleEngine,
     MergeReporter,
@@ -60,9 +48,6 @@ app = typer.Typer(
 console = Console()
 
 
-# ── logging setup ───────────────────────────────────────────────────
-
-
 def setup_logging(verbose: bool = False, quiet: bool = False) -> None:
     level = logging.DEBUG if verbose else (logging.WARNING if quiet else logging.INFO)
     logging.basicConfig(
@@ -73,26 +58,54 @@ def setup_logging(verbose: bool = False, quiet: bool = False) -> None:
     )
 
 
-# ── output writers ──────────────────────────────────────────────────
+def _build_output_content(rules, stats: dict | None = None) -> str:
+    """Build the output file content string."""
+    lines = [
+        "! Merged AdGuard Filter Rules (V3)\n",
+        f"! Generated: {datetime.now(timezone.utc).isoformat()}\n",
+    ]
+    if stats:
+        lines.append(f"! Sources: {stats.get('sources_ok', 0)}/{stats.get('sources_total', 0)}")
+        lines.append(f" ({stats.get('sources_cached', 0)} cached)\n")
+        lines.append(f"! Total rules: {len(rules)}\n")
+        lines.append(f"! Dedup rate: {stats.get('dedup_rate', 0):.1f}%\n")
+        lines.append(
+            f"! Dedup detail: exact_merged={stats.get('exact_merged', 0)}"
+            f" normalized_merged={stats.get('normalized_merged', 0)}"
+            f" wildcard_removed={stats.get('wildcard_removed', 0)}"
+            f" conflict_resolved={stats.get('conflict_resolved', 0)}\n"
+        )
+    lines.append("!\n")
+    for rule in rules:
+        lines.append(f"{rule}\n")
+    return "".join(lines)
 
 
-def write_output(rules, path: Path, stats: dict | None = None) -> None:
-    """Write merged rules to file with metadata header."""
-    with open(path, "w", encoding="utf-8") as f:
-        f.write("! Merged AdGuard Filter Rules (V3)\n")
-        f.write(f"! Generated: {datetime.now(timezone.utc).isoformat()}\n")
-        if stats:
-            f.write(f"! Sources: {stats.get('sources_ok', 0)}/{stats.get('sources_total', 0)}")
-            f.write(f" ({stats.get('sources_cached', 0)} cached)\n")
-            f.write(f"! Total rules: {len(rules)}\n")
-            f.write(f"! Dedup rate: {stats.get('dedup_rate', 0):.1f}%\n")
-            f.write(f"! Dedup detail: exact_merged={stats.get('exact_merged', 0)}"
-                    f" normalized_merged={stats.get('normalized_merged', 0)}"
-                    f" wildcard_removed={stats.get('wildcard_removed', 0)}"
-                    f" conflict_resolved={stats.get('conflict_resolved', 0)}\n")
-        f.write("!\n")
-        for rule in rules:
-            f.write(f"{rule}\n")
+def _rules_unchanged(path: Path, new_content: str) -> bool:
+    """Check if rule content (excluding metadata headers) is unchanged."""
+    if not path.exists():
+        return False
+    try:
+        existing = path.read_text(encoding="utf-8")
+        existing_rules = [l for l in existing.splitlines() if l and not l.startswith("!")]
+        new_rules = [l for l in new_content.splitlines() if l and not l.startswith("!")]
+        return existing_rules == new_rules
+    except Exception:
+        return False
+
+
+def write_output(rules, path: Path, stats: dict | None = None) -> bool:
+    """Write merged rules to file with metadata header.
+
+    Returns True if file was actually written, False if skipped (rules unchanged).
+    """
+    content = _build_output_content(rules, stats)
+
+    if _rules_unchanged(path, content):
+        return False
+
+    path.write_text(content, encoding="utf-8")
+    return True
 
 
 def write_compressed(rules, path: Path, stats: dict | None = None) -> None:
@@ -108,6 +121,7 @@ def write_compressed(rules, path: Path, stats: dict | None = None) -> None:
 def write_stats_json(stats: dict, rules, path: Path) -> None:
     """Write detailed stats.json."""
     from collections import Counter
+
     source_counts = Counter()
     category_counts = Counter()
     for r in rules:
@@ -124,87 +138,37 @@ def write_stats_json(stats: dict, rules, path: Path) -> None:
     path.write_text(json.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8")
 
 
-# ── main merge command ──────────────────────────────────────────────
-
-
 @app.command()
 def merge(
-    config: Optional[str] = typer.Option(
-        None, "--config", "-c",
-        help="YAML config file path",
-    ),
-    sources: Optional[List[str]] = typer.Option(
-        None, "--sources", "-s",
-        help="Source URLs (space-separated)",
-    ),
-    output: str = typer.Option(
-        "output/merged_rules.txt", "--output", "-o",
-        help="Output file path",
-    ),
-    report: bool = typer.Option(
-        False, "--report", "-r",
-        help="Generate merge report",
-    ),
-    report_format: str = typer.Option(
-        "markdown", "--report-format",
-        help="Report format: markdown, text, json",
-    ),
-    detect_conflicts: bool = typer.Option(
-        False, "--detect-conflicts",
-        help="Detect block/allow conflicts",
-    ),
-    no_allow_override: bool = typer.Option(
-        False, "--no-allow-override",
-        help="Disable allow-overrides-block resolution",
-    ),
-    normalized_dedup: bool = typer.Option(
-        False, "--normalized-dedup",
-        help="Enable fuzzy/normalized dedup (www-equivalence etc.)",
-    ),
-    strip_www: bool = typer.Option(
-        False, "--strip-www",
-        help="Treat www.example.com and example.com as equivalent",
-    ),
-    dry_run: bool = typer.Option(
-        False, "--dry-run",
-        help="Fetch + dedup but don't write output",
-    ),
-    compress: bool = typer.Option(
-        False, "--compress",
-        help="Also output .gz compressed version",
-    ),
-    timeout: int = typer.Option(60, "--timeout", help="Per-request timeout (seconds)"),
-    max_concurrency: int = typer.Option(
-        50, "--max-concurrency", "-w",
-        help="Max concurrent HTTP requests",
-    ),
-    no_cache: bool = typer.Option(
-        False, "--no-cache",
-        help="Disable incremental cache",
-    ),
+    config: Optional[str] = typer.Option(None, "--config", "-c", help="YAML config file path"),
+    sources: Optional[List[str]] = typer.Option(None, "--sources", "-s", help="Source URLs"),
+    output: str = typer.Option("output/merged_rules.txt", "--output", "-o", help="Output file path"),
+    report: bool = typer.Option(False, "--report", "-r", help="Generate merge report"),
+    report_format: str = typer.Option("markdown", "--report-format", help="Report format"),
+    detect_conflicts: bool = typer.Option(False, "--detect-conflicts", help="Detect conflicts"),
+    no_allow_override: bool = typer.Option(False, "--no-allow-override", help="Disable allow override"),
+    normalized_dedup: bool = typer.Option(False, "--normalized-dedup", help="Enable normalized dedup"),
+    strip_www: bool = typer.Option(False, "--strip-www", help="Strip www"),
+    dry_run: bool = typer.Option(False, "--dry-run", help="Dry run"),
+    compress: bool = typer.Option(False, "--compress", help="Compress output"),
+    timeout: int = typer.Option(60, "--timeout", help="Timeout seconds"),
+    max_concurrency: int = typer.Option(50, "--max-concurrency", "-w", help="Max concurrency"),
+    no_cache: bool = typer.Option(False, "--no-cache", help="Disable cache"),
     cache_dir: str = typer.Option("cache", "--cache-dir", help="Cache directory"),
-    cache_ttl: int = typer.Option(
-        0, "--cache-ttl",
-        help="Cache TTL in seconds (0 = no expiry)",
-    ),
-    cache_max_size: int = typer.Option(
-        0, "--cache-max-size",
-        help="Max cache size in MB (0 = unlimited)",
-    ),
-    verbose: bool = typer.Option(False, "--verbose", "-v", help="Verbose output"),
-    quiet: bool = typer.Option(False, "--quiet", "-q", help="Quiet output"),
+    cache_ttl: int = typer.Option(0, "--cache-ttl", help="Cache TTL"),
+    cache_max_size: int = typer.Option(0, "--cache-max-size", help="Max cache size MB"),
+    verbose: bool = typer.Option(False, "--verbose", "-v", help="Verbose"),
+    quiet: bool = typer.Option(False, "--quiet", "-q", help="Quiet"),
 ):
     """Merge AdGuard filter rules from multiple sources."""
     setup_logging(verbose, quiet)
     log = logging.getLogger("merge")
 
-    # load sources
     source_metas = []
     if config:
         try:
             cfg = load_config(config)
             source_metas = load_source_metas(config)
-            # apply config-level settings if not overridden by CLI
             if timeout == 60 and cfg.timeout != 60:
                 timeout = cfg.timeout
             if max_concurrency == 50 and cfg.max_concurrency != 50:
@@ -225,6 +189,7 @@ def merge(
             raise typer.Exit(code=1)
     elif sources:
         from merger.models import SourceMeta
+
         source_metas = [SourceMeta(name=u, url=u) for u in sources]
     else:
         console.print("[red]Error: specify --config or --sources[/red]")
@@ -234,10 +199,8 @@ def merge(
         console.print("[red]No enabled sources![/red]")
         raise typer.Exit(code=1)
 
-    # build normalizer
     normalizer = RuleNormalizer(strip_www=strip_www) if (normalized_dedup or strip_www) else None
 
-    # build engine
     cache_dir_arg = None if no_cache else cache_dir
     engine = AsyncRuleEngine(
         timeout=timeout,
@@ -257,7 +220,6 @@ def merge(
         console.print(f"  Normalized dedup: enabled (strip_www={strip_www})")
     console.print()
 
-    # run merge with progress
     t0 = time.time()
     with Progress(
         SpinnerColumn(),
@@ -270,8 +232,6 @@ def merge(
     ) as progress:
         fetch_task = progress.add_task("Fetching & parsing sources...", total=len(source_metas))
 
-        # We can't easily show per-source progress with asyncio.gather,
-        # so we run the merge and update the bar after completion.
         async def _run():
             async with engine:
                 result = await engine.merge(
@@ -288,17 +248,15 @@ def merge(
             console.print("\n[yellow]Cancelled[/yellow]")
             raise typer.Exit(code=1)
         except Exception as e:
-            # Always print full traceback in CI/non-interactive mode
             console.print(f"\n[red bold]✗ Merge failed: {type(e).__name__}: {e}[/red bold]")
             console.print("\n[red]Full traceback:[/red]")
             import traceback
             traceback.print_exc()
-            # Also log to file for debugging
             try:
                 with open("merge_error.log", "w") as f:
                     f.write(f"Error: {type(e).__name__}: {e}\n\n")
                     traceback.print_exc(file=f)
-                console.print(f"[dim]Error log written to merge_error.log[/dim]")
+                console.print("[dim]Error log written to merge_error.log[/dim]")
             except Exception:
                 pass
             raise typer.Exit(code=1)
@@ -307,19 +265,22 @@ def merge(
     stats = result["stats"]
     elapsed = time.time() - t0
 
-    # results table
     table = Table(title="Merge Results", show_header=True, header_style="bold cyan")
     table.add_column("Metric", style="dim")
     table.add_column("Value", justify="right")
     table.add_row("Rules (before)", f"{stats['total_before']:,}")
     table.add_row("Rules (after)", f"{len(rules):,}")
     table.add_row("Dedup rate", f"{stats['dedup_rate']:.1f}%")
-    table.add_row("Block / Allow / Comment",
-                  f"{stats['block_count']:,} / {stats['allow_count']:,} / {stats['comment_count']:,}")
-    table.add_row("Sources (ok/cached/total)",
-                  f"{stats['sources_ok']} / {stats['sources_cached']} / {stats['sources_total']}")
+    table.add_row(
+        "Block / Allow / Comment",
+        f"{stats['block_count']:,} / {stats['allow_count']:,} / {stats['comment_count']:,}",
+    )
+    table.add_row(
+        "Sources (ok/cached/total)",
+        f"{stats['sources_ok']} / {stats['sources_cached']} / {stats['sources_total']}",
+    )
     table.add_row("Exact merged", f"{stats['exact_merged']:,}")
-    if stats.get('normalized_merged', 0) > 0:
+    if stats.get("normalized_merged", 0) > 0:
         table.add_row("Normalized merged", f"{stats['normalized_merged']:,}")
     table.add_row("Wildcard removed", f"{stats['wildcard_removed']:,}")
     table.add_row("Conflicts resolved", f"{stats['conflict_resolved']:,}")
@@ -335,26 +296,26 @@ def merge(
             if len(conflicts) > 10:
                 console.print(f"  ... and {len(conflicts) - 10} more")
 
-    # write output
     if dry_run:
         console.print("\n[yellow]Dry-run mode — skipping file write[/yellow]")
     else:
         out = Path(output)
         out.parent.mkdir(parents=True, exist_ok=True)
-        write_output(rules, out, stats)
-        console.print(f"\n[green]✓ Written to {out.absolute()}[/green]")
+        written = write_output(rules, out, stats)
+        if written:
+            console.print(f"\n[green]✓ Written to {out.absolute()}[/green]")
+        else:
+            console.print(f"\n[dim]↷ Rules unchanged — skipped writing {out.name}[/dim]")
 
         if compress:
             gz_path = out.with_suffix(out.suffix + ".gz")
             write_compressed(rules, gz_path, stats)
             console.print(f"[green]✓ Compressed: {gz_path.absolute()}[/green]")
 
-        # stats.json
         stats_path = out.parent / "stats.json"
         write_stats_json(stats, rules, stats_path)
         console.print(f"[green]✓ Stats: {stats_path.absolute()}[/green]")
 
-    # report
     if report:
         reporter = MergeReporter(rules, stats)
         ext = {"markdown": "md", "text": "txt", "json": "json"}[report_format]
@@ -365,13 +326,9 @@ def merge(
     console.print()
 
 
-# ── utility commands ─────────────────────────────────────────────────
-
-
 @app.command()
 def init(
-    output: str = typer.Option("config/sources.yaml", "--output", "-o",
-                                help="Output config path"),
+    output: str = typer.Option("config/sources.yaml", "--output", "-o", help="Output config path"),
     force: bool = typer.Option(False, "--force", "-f", help="Overwrite existing file"),
 ):
     """Generate a default configuration file."""
@@ -396,7 +353,7 @@ def validate(
         raise typer.Exit(code=1)
     else:
         cfg = load_config(config)
-        console.print(f"[green]✓ Valid config[/green]")
+        console.print("[green]✓ Valid config[/green]")
         console.print(f"  Sources: {len(cfg.sources)} ({sum(1 for s in cfg.sources if s.enabled)} enabled)")
         console.print(f"  Cache: {'enabled' if cfg.cache.enabled else 'disabled'}")
         console.print(f"  Output dir: {cfg.output.directory}")
@@ -415,8 +372,8 @@ def cache_stats(
     table.add_column("Value", justify="right")
     table.add_row("Entries", f"{stats['entry_count']}")
     table.add_row("Total size", f"{stats['total_size_mb']} MB")
-    table.add_row("TTL", f"{stats['ttl_seconds']}s" if stats['ttl_seconds'] > 0 else "no expiry")
-    table.add_row("Max size", f"{stats['max_size_mb']} MB" if stats['max_size_mb'] > 0 else "unlimited")
+    table.add_row("TTL", f"{stats['ttl_seconds']}s" if stats["ttl_seconds"] > 0 else "no expiry")
+    table.add_row("Max size", f"{stats['max_size_mb']} MB" if stats["max_size_mb"] > 0 else "unlimited")
     console.print(table)
 
 
