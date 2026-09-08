@@ -1,134 +1,133 @@
-# V3 GitHub Actions — Async merge with ETag cache
-
-name: Merge Rules
+name: Merge Rules (V3)
 
 on:
   schedule:
-    - cron: '0 */6 * * *'
-
+    - cron: '0 */6 * * *'  # every 6 hours
   workflow_dispatch:
-    inputs:
-      detect_conflicts:
-        description: 'Detect block/allow conflicts'
-        required: false
-        default: 'false'
-
   push:
     branches: [main]
     paths:
-      - 'config/sources.yaml'
+      - 'config/**'
       - 'merger/**'
       - 'merge_rules.py'
-      - '.github/workflows/merge.yml'
+      - 'config_loader.py'
 
-env:
-  PYTHON_VERSION: '3.11'
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+permissions:
+  contents: write
 
 jobs:
   merge:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
+    timeout-minutes: 15
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 1
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: ${{ env.PYTHON_VERSION }}
-        cache: 'pip'
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
 
-    - name: Restore cache
-      uses: actions/cache@v4
-      with:
-        path: .cache/sources
-        key: source-cache-${{ github.run_number }}
-        restore-keys: source-cache-
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
+      - name: Validate config
+        run: |
+          python merge_rules.py validate config/sources.yaml
 
-    - name: Merge filter rules
-      id: merge
-      run: |
-        mkdir -p output
-        python3 << 'MERGE_EOF'
-        import sys, os
-        from merger import RuleEngine, MergeReporter
-        from config_loader import load_sources_config
-        from datetime import datetime, timezone
-        import asyncio
+      - name: Restore cache
+        uses: actions/cache@v4
+        with:
+          path: cache/
+          key: rule-cache-${{ github.run_id }}
+          restore-keys: |
+            rule-cache-
 
-        engine = RuleEngine(
-            timeout=60,
-            max_workers=20,
-            allow_overrides_block=True,
-            use_cache=True,
-            cache_ttl=3600,
-        )
+      - name: Run merge (V3 async)
+        run: |
+          echo "::group::Merge Output"
+          python merge_rules.py merge \
+            --config config/sources.yaml \
+            --output output/merged_rules.txt \
+            --report \
+            --report-format markdown \
+            --compress \
+            --cache-dir cache \
+            --cache-max-size 500
+          echo "::endgroup::"
 
-        sources = load_sources_config('config/sources.yaml')
-        if not sources:
-            print('No sources!')
-            sys.exit(1)
+      - name: Save cache
+        uses: actions/cache@v4
+        with:
+          path: cache/
+          key: rule-cache-${{ github.run_id }}
 
-        result = asyncio.run(engine.async_merge(sources, return_stats=True))
-        rules = result['rules']
-        stats = result['stats']
+      - name: Check for changes
+        id: changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
 
-        print(f'V3 merged {len(rules)} rules ({stats["dedup_rate"]:.1f}% dedup, {stats["elapsed_time"]:.1f}s, {stats["cache_hits"]} cache hits)')
+          # Check if output changed
+          if git diff --quiet output/merged_rules.txt 2>/dev/null; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+            echo "No changes in merged rules"
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+            echo "Rules changed, will commit"
+          fi
 
-        with open('output/merged_rules.txt', 'w', encoding='utf-8') as f:
-            f.write('! Merged AdGuard Filter Rules\n')
-            f.write(f'! Generated: {datetime.now(timezone.utc).isoformat()}\n')
-            f.write(f'! Sources: {stats["sources_ok"]}/{stats["sources_total"]}\n')
-            f.write(f'! Total rules: {len(rules)}\n')
-            f.write(f'! Dedup rate: {stats["dedup_rate"]:.1f}%\n')
-            f.write('!\n')
-            for rule in rules:
-                f.write(f'{rule}\n')
+      - name: Commit and push
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          git add output/merged_rules.txt output/merged_rules.txt.gz output/stats.json output/*.report.md 2>/dev/null || true
+          git commit -m "Auto-merge: update rules $(date -u +'%Y-%m-%d %H:%M UTC')" || echo "Nothing to commit"
+          git push || echo "Push failed (may be no changes)"
 
-        reporter = MergeReporter(rules, stats)
-        reporter.save('output/detailed_report.md', fmt='markdown')
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: merged-rules
+          path: |
+            output/merged_rules.txt
+            output/merged_rules.txt.gz
+            output/stats.json
+          retention-days: 30
 
-        gh_out = os.environ['GITHUB_OUTPUT']
-        with open(gh_out, 'a') as f:
-            f.write(f'total_rules={len(rules)}\n')
-            f.write(f'block_rules={stats["block_count"]}\n')
-            f.write(f'allow_rules={stats["allow_count"]}\n')
-            f.write(f'dedup_rate={stats["dedup_rate"]:.1f}\n')
-            f.write(f'elapsed_time={stats["elapsed_time"]:.2f}\n')
-            f.write(f'cache_hits={stats["cache_hits"]}\n')
-        print('Done')
-        MERGE_EOF
-      timeout-minutes: 15
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
 
-    - name: Commit and push
-      run: |
-        git config --local user.email "github-actions[bot]@users.noreply.github.com"
-        git config --local user.name "github-actions[bot]"
-        git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}
-        git add output/
-        if git diff --cached --quiet; then
-          echo "No changes"
-          exit 0
-        fi
-        git commit -m "chore: update merged rules"
-        git push
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
-    - name: Upload artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: merged-rules-${{ github.run_id }}
-        path: output/
-        retention-days: 30
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest pytest-asyncio pytest-benchmark
+
+      - name: Run tests
+        run: |
+          echo "::group::Test Output"
+          python -m pytest tests/test_core.py -v --tb=short
+          echo "::endgroup::"
+
+      - name: Run benchmark (quick)
+        run: |
+          echo "::group::Benchmark Output"
+          python -m pytest tests/benchmark.py --benchmark-only --benchmark-columns=min,max,mean,stddev,ops -q || echo "Benchmark skipped"
+          echo "::endgroup::"
