@@ -60,14 +60,6 @@ jobs:
           restore-keys: |
             rule-cache-v3-
 
-      - name: Debug environment
-        run: |
-          echo "Current directory: $(pwd)"
-          echo "PYTHONPATH: $PYTHONPATH"
-          ls -la
-          ls -la merger/
-          python -c "import sys; print('sys.path:', sys.path[:3])"
-
       - name: Run merge
         id: merge
         env:
@@ -83,35 +75,13 @@ jobs:
             --cache-max-size 500
           echo "::endgroup::"
 
-      - name: Check for changes
-        id: changes
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-
-          CHANGED=false
-          if ! git diff --quiet -- output/ 2>/dev/null; then
-            CHANGED=true
-            echo "Modified files detected in output/"
-          fi
-          if git ls-files --others --exclude-standard -- output/ | grep -q .; then
-            CHANGED=true
-            echo "New files detected in output/"
-          fi
-
-          echo "changed=$CHANGED" >> "$GITHUB_OUTPUT"
-
       - name: Commit and push
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          git pull origin main --no-rebase || true
           git add output/
           git commit -m "Auto-merge: update rules $(date -u +'%Y-%m-%d %H:%M UTC')" || echo "Nothing to commit"
-          git pull --rebase origin main || true
-          # 如果 rebase 有冲突，放弃本地更改，强制使用当前版本
-          git checkout --theirs output/ || true
-          git add output/ || true
-          git rebase --continue || true
           git push
 
       - name: Upload artifacts
