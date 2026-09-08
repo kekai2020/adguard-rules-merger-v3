@@ -288,10 +288,19 @@ def merge(
             console.print("\n[yellow]Cancelled[/yellow]")
             raise typer.Exit(code=1)
         except Exception as e:
-            console.print(f"\n[red]Failed: {e}[/red]")
-            if verbose:
-                import traceback
-                traceback.print_exc()
+            # Always print full traceback in CI/non-interactive mode
+            console.print(f"\n[red bold]✗ Merge failed: {type(e).__name__}: {e}[/red bold]")
+            console.print("\n[red]Full traceback:[/red]")
+            import traceback
+            traceback.print_exc()
+            # Also log to file for debugging
+            try:
+                with open("merge_error.log", "w") as f:
+                    f.write(f"Error: {type(e).__name__}: {e}\n\n")
+                    traceback.print_exc(file=f)
+                console.print(f"[dim]Error log written to merge_error.log[/dim]")
+            except Exception:
+                pass
             raise typer.Exit(code=1)
 
     rules = result["rules"]
