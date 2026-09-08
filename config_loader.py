@@ -153,7 +153,7 @@ def load_sources(config_path: str = "config/sources.yaml") -> List[Dict[str, Any
 
 def load_source_metas(config_path: str = "config/sources.yaml") -> List:
     """Return list of SourceMeta objects for the engine."""
-    from .models import SourceMeta  # local import to avoid circular
+    from merger.models import SourceMeta  # absolute import (config_loader is top-level)
     cfg = load_config(config_path)
     return [
         SourceMeta(
