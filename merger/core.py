@@ -247,7 +247,8 @@ class AsyncRuleEngine:
                     # fall through to re-fetch if cache is missing
 
                 resp.raise_for_status()
-                text = await resp.text()
+                # Use errors='replace' to handle non-UTF-8 content gracefully
+                text = await resp.text(encoding="utf-8", errors="replace")
 
                 # extract cache headers
                 etag = resp.headers.get("ETag")
@@ -268,13 +269,14 @@ class AsyncRuleEngine:
 
                 return text, False
 
-        except aiohttp.ClientError as e:
-            # network error — try cache as fallback
+        except (aiohttp.ClientError, asyncio.TimeoutError, UnicodeDecodeError, OSError) as e:
+            # network/timeout/encoding error — try cache as fallback
             if self.cache:
                 cached = self.cache.get_content(source)
                 if cached is not None:
-                    logger.warning("Network error for %s, using cache: %s", source, e)
+                    logger.warning("Error for %s (%s), using cache", source, type(e).__name__)
                     return cached, True
+            logger.error("Fetch failed for %s: %s", source, e)
             raise
 
     async def fetch_and_parse(
