@@ -11,14 +11,20 @@ on:
       - 'merger/**'
       - 'merge_rules.py'
       - 'config_loader.py'
+      - '.github/workflows/merge.yml'
 
 permissions:
   contents: write
 
+# 避免重复运行：同一分支的新运行会取消旧运行
+concurrency:
+  group: merge-rules-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   merge:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
 
     steps:
       - name: Checkout
@@ -39,34 +45,33 @@ jobs:
 
       - name: Validate config
         run: |
-          python -m merge_rules validate config/sources.yaml
+          python merge_rules.py validate config/sources.yaml
 
+      # 注意：actions/cache 会在 job 结束的 post 阶段自动保存缓存，
+      # 不需要显式的 "Save cache" 步骤。
       - name: Restore cache
         uses: actions/cache@v4
         with:
           path: cache/
-          key: rule-cache-${{ github.run_id }}
+          # 使用稳定的缓存键前缀，避免每次 run_id 都失效
+          key: rule-cache-v3-${{ hashFiles('config/sources.yaml') }}
           restore-keys: |
-            rule-cache-
+            rule-cache-v3-
 
       - name: Run merge (V3 async)
+        id: merge
         run: |
           echo "::group::Merge Output"
-          python -m merge_rules merge \
+          python merge_rules.py merge \
             --config config/sources.yaml \
             --output output/merged_rules.txt \
             --report \
             --report-format markdown \
             --compress \
             --cache-dir cache \
-            --cache-max-size 500
+            --cache-max-size 500 \
+            --timeout 60
           echo "::endgroup::"
-
-      - name: Save cache
-        uses: actions/cache@v4
-        with:
-          path: cache/
-          key: rule-cache-${{ github.run_id }}
 
       - name: Check for changes
         id: changes
@@ -74,30 +79,44 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          # Check if output changed
-          if git diff --quiet output/merged_rules.txt 2>/dev/null; then
-            echo "changed=false" >> $GITHUB_OUTPUT
-            echo "No changes in merged rules"
-          else
+          # 检测 output 目录是否有变更（包括修改和新增文件）
+          # git diff --quiet 只检测已跟踪文件的修改
+          # git ls-files --others 检测未跟踪的新文件
+          CHANGED=false
+          if ! git diff --quiet -- output/ 2>/dev/null; then
+            CHANGED=true
+            echo "Detected modified files in output/"
+          fi
+          if git ls-files --others --exclude-standard -- output/ | grep -q .; then
+            CHANGED=true
+            echo "Detected new files in output/"
+          fi
+
+          if [ "$CHANGED" = "true" ]; then
             echo "changed=true" >> $GITHUB_OUTPUT
             echo "Rules changed, will commit"
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+            echo "No changes in merged rules"
           fi
 
       - name: Commit and push
         if: steps.changes.outputs.changed == 'true'
         run: |
-          git add output/merged_rules.txt output/merged_rules.txt.gz output/stats.json output/*.report.md 2>/dev/null || true
+          git add output/
           git commit -m "Auto-merge: update rules $(date -u +'%Y-%m-%d %H:%M UTC')" || echo "Nothing to commit"
-          git push || echo "Push failed (may be no changes)"
+          git push || echo "Push failed"
 
       - name: Upload artifacts
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: merged-rules
+          name: merged-rules-${{ github.run_id }}
           path: |
             output/merged_rules.txt
             output/merged_rules.txt.gz
             output/stats.json
+            output/*.report.md
           retention-days: 30
 
   test:
@@ -129,5 +148,6 @@ jobs:
       - name: Run benchmark (quick)
         run: |
           echo "::group::Benchmark Output"
-          python -m pytest tests/benchmark.py --benchmark-only --benchmark-columns=min,max,mean,stddev,ops -q || echo "Benchmark skipped"
+          python -m pytest tests/benchmark.py --benchmark-only \
+            --benchmark-columns=min,max,mean,stddev,ops -q || echo "Benchmark skipped"
           echo "::endgroup::"
