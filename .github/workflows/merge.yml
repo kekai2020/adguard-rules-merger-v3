@@ -47,7 +47,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      # 关键修复：使用 PYTHONPATH + 模块导入方式执行
+      # 关键修复：使用 PYTHONPATH + 模块导入方式执行，根治相对导入错误
       - name: Validate config
         env:
           PYTHONPATH: ${{ github.workspace }}
@@ -58,6 +58,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: cache/
+          # 基于 config 文件 hash 的缓存键，跨运行共享缓存
           key: rule-cache-v3-${{ hashFiles('config/sources.yaml') }}
           restore-keys: |
             rule-cache-v3-
