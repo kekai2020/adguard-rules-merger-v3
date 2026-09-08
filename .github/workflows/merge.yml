@@ -79,7 +79,6 @@ jobs:
             --output output/merged_rules.txt \
             --report \
             --report-format markdown \
-            --compress \
             --cache-dir cache \
             --cache-max-size 500
           echo "::endgroup::"
@@ -117,7 +116,6 @@ jobs:
           name: merged-rules-${{ github.run_id }}
           path: |
             output/merged_rules.txt
-            output/merged_rules.txt.gz
             output/stats.json
             output/*.report.md
           retention-days: 30
