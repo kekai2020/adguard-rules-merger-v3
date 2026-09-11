@@ -1,25 +1,25 @@
 # AdGuard Rules Merge Report (V3)
 
-**Generated:** 2026-09-11 02:08:07 UTC
+**Generated:** 2026-09-11 10:16:02 UTC
 
 ## Summary
 
 | Metric | Value |
 |--------|-------|
-| Rules before dedup | 3,411,672 |
-| Rules after dedup | 2,742,645 |
-| Deduplication rate | 19.6% |
+| Rules before dedup | 3,555,335 |
+| Rules after dedup | 2,887,979 |
+| Deduplication rate | 18.8% |
 | Sources loaded | 14 / 14 |
 | Sources from cache | 3 |
-| Processing time | 25.15s |
+| Processing time | 29.18s |
 | Exact merges | 0 |
-| Normalized merges | 668,961 |
+| Normalized merges | 667,290 |
 | Wildcard removals | 32 |
 | Conflicts resolved | 34 |
 
 ### Rule Breakdown
 
-- **Block:** 2,742,412
+- **Block:** 2,887,746
 - **Allow:** 232
 - **Comment:** 1
 
@@ -27,18 +27,18 @@
 
 | Source | Rules contributed |
 |--------|-------------------|
-| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_44.txt` | 2,260,252 |
-| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_49.txt` | 273,827 |
-| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_29.txt` | 197,399 |
-| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_1.txt` | 177,798 |
-| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_18.txt` | 151,850 |
+| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_44.txt` | 2,405,373 |
+| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_49.txt` | 272,138 |
+| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_29.txt` | 197,492 |
+| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_1.txt` | 177,917 |
+| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_18.txt` | 151,851 |
 | `https://adguardteam.github.io/HostlistsRegistry/assets/filter_24.txt` | 102,211 |
 | `https://adguardteam.github.io/HostlistsRegistry/assets/filter_21.txt` | 98,299 |
 | `https://adguardteam.github.io/HostlistsRegistry/assets/filter_5.txt` | 55,491 |
 | `https://adguardteam.github.io/HostlistsRegistry/assets/filter_42.txt` | 46,003 |
 | `https://adguardteam.github.io/HostlistsRegistry/assets/filter_30.txt` | 38,549 |
 | `https://adguardteam.github.io/HostlistsRegistry/assets/filter_11.txt` | 4,161 |
-| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_10.txt` | 951 |
+| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_10.txt` | 960 |
 | `https://adguardteam.github.io/HostlistsRegistry/assets/filter_31.txt` | 898 |
 | `https://adguardteam.github.io/HostlistsRegistry/assets/filter_8.txt` | 308 |
 
@@ -46,9 +46,9 @@
 
 | Category | Count | Percentage |
 |----------|-------|------------|
-| malware | 2,271,744 | 82.8% |
-| ads | 374,934 | 13.7% |
-| phishing | 95,256 | 3.5% |
+| malware | 2,417,025 | 83.7% |
+| ads | 374,692 | 13.0% |
+| phishing | 95,551 | 3.3% |
 | tracking | 650 | 0.0% |
 | mining | 60 | 0.0% |
 | comment | 1 | 0.0% |
@@ -57,29 +57,29 @@
 
 | TLD | Count |
 |-----|-------|
-| .com | 825,830 |
-| .xyz | 573,342 |
-| .top | 111,263 |
-| .click | 106,353 |
-| .digital | 81,520 |
-| .shop | 75,723 |
-| .net | 62,502 |
-| .asia | 55,371 |
-| .info | 55,026 |
-| .sbs | 41,404 |
-| .online | 40,744 |
-| .org | 33,872 |
-| .pro | 32,248 |
-| .de | 26,963 |
-| .cfd | 25,744 |
-| .site | 23,998 |
-| .lol | 22,698 |
-| .cn | 22,629 |
-| .ru | 20,743 |
-| .cc | 19,692 |
+| .com | 824,327 |
+| .xyz | 613,462 |
+| .shop | 182,571 |
+| .top | 110,993 |
+| .click | 106,690 |
+| .digital | 81,715 |
+| .net | 62,436 |
+| .asia | 55,399 |
+| .info | 55,077 |
+| .sbs | 41,215 |
+| .online | 40,851 |
+| .org | 33,785 |
+| .pro | 32,129 |
+| .de | 27,006 |
+| .cfd | 25,746 |
+| .site | 24,054 |
+| .lol | 22,766 |
+| .cn | 22,650 |
+| .ru | 20,671 |
+| .cc | 19,621 |
 
 ## Type Distribution
 
-- **block:** 2,742,412 (100.0%) ███████████████████
+- **block:** 2,887,746 (100.0%) ███████████████████
 - **allow:** 232 (0.0%) 
 - **comment:** 1 (0.0%) 
