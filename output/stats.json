@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-22T15:09:59.692600+00:00",
+  "generated_at": "2026-09-22T15:59:06.269135+00:00",
   "summary": {
     "total_before": 4340543,
     "total_after": 3746783,
@@ -7,10 +7,10 @@
     "block_count": 3746546,
     "allow_count": 236,
     "comment_count": 1,
-    "elapsed_time": 38.856321811676025,
+    "elapsed_time": 32.07465863227844,
     "sources_ok": 18,
     "sources_total": 18,
-    "sources_cached": 1,
+    "sources_cached": 18,
     "exact_merged": 0,
     "wildcard_removed": 1,
     "conflict_resolved": 33,
