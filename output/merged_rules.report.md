@@ -1,25 +1,25 @@
 # AdGuard Rules Merge Report (V3)
 
-**Generated:** 2026-10-03 15:26:44 UTC
+**Generated:** 2026-10-03 20:22:10 UTC
 
 ## Summary
 
 | Metric | Value |
 |--------|-------|
-| Rules before dedup | 3,979,794 |
-| Rules after dedup | 3,396,073 |
+| Rules before dedup | 3,979,492 |
+| Rules after dedup | 3,395,889 |
 | Deduplication rate | 14.7% |
 | Sources loaded | 18 / 18 |
 | Sources from cache | 3 |
-| Processing time | 25.19s |
+| Processing time | 27.33s |
 | Exact merges | 0 |
-| Normalized merges | 583,685 |
+| Normalized merges | 583,567 |
 | Wildcard removals | 1 |
 | Conflicts resolved | 35 |
 
 ### Rule Breakdown
 
-- **Block:** 3,395,833
+- **Block:** 3,395,649
 - **Allow:** 239
 - **Comment:** 1
 
@@ -30,11 +30,11 @@
 | `https://adguardteam.github.io/HostlistsRegistry/assets/filter_44.txt` | 2,375,999 |
 | `https://adguardteam.github.io/HostlistsRegistry/assets/filter_47.txt` | 578,452 |
 | `https://adguardteam.github.io/HostlistsRegistry/assets/filter_49.txt` | 284,070 |
-| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_29.txt` | 197,351 |
-| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_1.txt` | 177,624 |
-| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_18.txt` | 142,738 |
+| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_29.txt` | 197,410 |
+| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_1.txt` | 177,671 |
+| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_18.txt` | 142,275 |
 | `https://adguardteam.github.io/HostlistsRegistry/assets/filter_21.txt` | 99,503 |
-| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_5.txt` | 57,657 |
+| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_5.txt` | 57,730 |
 | `https://adguardteam.github.io/HostlistsRegistry/assets/filter_30.txt` | 38,617 |
 | `https://adguardteam.github.io/HostlistsRegistry/assets/filter_52.txt` | 16,167 |
 | `https://adguardteam.github.io/HostlistsRegistry/assets/filter_11.txt` | 3,205 |
@@ -50,36 +50,36 @@
 
 | Category | Count | Percentage |
 |----------|-------|------------|
-| other | 3,396,072 | 100.0% |
+| other | 3,395,888 | 100.0% |
 | comment | 1 | 0.0% |
 
 ## Top 20 TLDs
 
 | TLD | Count |
 |-----|-------|
-| .com | 941,735 |
-| .xyz | 869,964 |
-| .shop | 164,747 |
-| .click | 121,400 |
-| .top | 109,593 |
-| .digital | 88,583 |
-| .net | 76,845 |
-| .online | 51,704 |
-| .info | 49,740 |
-| .org | 45,785 |
-| .sbs | 43,105 |
+| .com | 941,725 |
+| .xyz | 869,947 |
+| .shop | 164,764 |
+| .click | 121,385 |
+| .top | 109,590 |
+| .digital | 88,580 |
+| .net | 76,879 |
+| .online | 51,694 |
+| .info | 49,747 |
+| .org | 45,787 |
+| .sbs | 43,104 |
 | .buzz | 31,451 |
 | .de | 30,372 |
-| .site | 29,275 |
-| .pro | 28,522 |
+| .site | 29,251 |
+| .pro | 28,519 |
 | .casino | 27,488 |
-| .cfd | 26,607 |
+| .cfd | 26,539 |
 | .ru | 26,146 |
 | .vip | 26,077 |
 | .asia | 24,226 |
 
 ## Type Distribution
 
-- **block:** 3,395,833 (100.0%) ███████████████████
+- **block:** 3,395,649 (100.0%) ███████████████████
 - **allow:** 239 (0.0%) 
 - **comment:** 1 (0.0%) 
