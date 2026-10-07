@@ -1,25 +1,25 @@
 # AdGuard Rules Merge Report (V3)
 
-**Generated:** 2026-10-06 22:03:01 UTC
+**Generated:** 2026-10-07 03:24:02 UTC
 
 ## Summary
 
 | Metric | Value |
 |--------|-------|
-| Rules before dedup | 3,658,266 |
-| Rules after dedup | 3,074,451 |
-| Deduplication rate | 16.0% |
+| Rules before dedup | 3,981,117 |
+| Rules after dedup | 3,401,679 |
+| Deduplication rate | 14.6% |
 | Sources loaded | 18 / 18 |
 | Sources from cache | 2 |
-| Processing time | 31.73s |
+| Processing time | 30.53s |
 | Exact merges | 0 |
-| Normalized merges | 583,779 |
+| Normalized merges | 579,402 |
 | Wildcard removals | 1 |
 | Conflicts resolved | 35 |
 
 ### Rule Breakdown
 
-- **Block:** 3,074,170
+- **Block:** 3,401,398
 - **Allow:** 280
 - **Comment:** 1
 
@@ -27,17 +27,17 @@
 
 | Source | Rules contributed |
 |--------|-------------------|
-| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_44.txt` | 2,103,095 |
-| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_47.txt` | 582,307 |
-| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_49.txt` | 233,631 |
-| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_29.txt` | 198,327 |
-| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_1.txt` | 178,606 |
-| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_18.txt` | 141,128 |
+| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_44.txt` | 2,425,168 |
+| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_47.txt` | 582,507 |
+| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_49.txt` | 234,362 |
+| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_29.txt` | 198,463 |
+| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_1.txt` | 178,691 |
+| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_18.txt` | 141,068 |
 | `https://adguardteam.github.io/HostlistsRegistry/assets/filter_21.txt` | 100,159 |
-| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_5.txt` | 57,418 |
-| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_30.txt` | 36,269 |
-| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_52.txt` | 16,005 |
-| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_11.txt` | 3,009 |
+| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_5.txt` | 57,438 |
+| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_30.txt` | 35,991 |
+| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_52.txt` | 15,989 |
+| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_11.txt` | 2,977 |
 | `https://adguardteam.github.io/HostlistsRegistry/assets/filter_57.txt` | 1,377 |
 | `https://adguardteam.github.io/HostlistsRegistry/assets/filter_10.txt` | 931 |
 | `https://adguardteam.github.io/HostlistsRegistry/assets/filter_31.txt` | 901 |
@@ -50,36 +50,36 @@
 
 | Category | Count | Percentage |
 |----------|-------|------------|
-| other | 3,074,450 | 100.0% |
+| other | 3,401,678 | 100.0% |
 | comment | 1 | 0.0% |
 
 ## Top 20 TLDs
 
 | TLD | Count |
 |-----|-------|
-| .xyz | 897,884 |
-| .com | 791,005 |
-| .shop | 147,072 |
-| .click | 112,925 |
-| .digital | 84,721 |
-| .top | 78,364 |
-| .net | 68,183 |
-| .online | 49,996 |
-| .sbs | 41,781 |
-| .info | 39,766 |
-| .org | 38,522 |
-| .buzz | 31,295 |
-| .site | 27,720 |
-| .casino | 26,931 |
-| .cfd | 25,766 |
-| .de | 25,664 |
-| .ru | 22,178 |
-| .vip | 22,121 |
-| .icu | 20,670 |
-| .cn | 19,081 |
+| .xyz | 926,064 |
+| .com | 922,263 |
+| .shop | 161,005 |
+| .click | 120,866 |
+| .top | 112,317 |
+| .digital | 88,066 |
+| .net | 75,867 |
+| .online | 51,581 |
+| .info | 49,218 |
+| .sbs | 47,343 |
+| .org | 44,789 |
+| .buzz | 31,626 |
+| .site | 28,633 |
+| .pro | 28,302 |
+| .casino | 27,042 |
+| .cfd | 26,641 |
+| .vip | 26,474 |
+| .de | 26,390 |
+| .icu | 23,735 |
+| .ru | 23,222 |
 
 ## Type Distribution
 
-- **block:** 3,074,170 (100.0%) ███████████████████
+- **block:** 3,401,398 (100.0%) ███████████████████
 - **allow:** 280 (0.0%) 
 - **comment:** 1 (0.0%) 
