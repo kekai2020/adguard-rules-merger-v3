@@ -1,25 +1,25 @@
 # AdGuard Rules Merge Report (V3)
 
-**Generated:** 2026-10-15 20:44:18 UTC
+**Generated:** 2026-10-16 02:20:07 UTC
 
 ## Summary
 
 | Metric | Value |
 |--------|-------|
-| Rules before dedup | 996,693 |
-| Rules after dedup | 555,170 |
-| Deduplication rate | 44.3% |
+| Rules before dedup | 3,161,683 |
+| Rules after dedup | 2,556,214 |
+| Deduplication rate | 19.2% |
 | Sources loaded | 18 / 18 |
 | Sources from cache | 2 |
-| Processing time | 7.58s |
+| Processing time | 29.96s |
 | Exact merges | 0 |
-| Normalized merges | 441,486 |
-| Wildcard removals | 1 |
+| Normalized merges | 605,431 |
+| Wildcard removals | 2 |
 | Conflicts resolved | 36 |
 
 ### Rule Breakdown
 
-- **Block:** 554,888
+- **Block:** 2,555,932
 - **Allow:** 281
 - **Comment:** 1
 
@@ -27,15 +27,17 @@
 
 | Source | Rules contributed |
 |--------|-------------------|
-| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_49.txt` | 235,774 |
-| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_29.txt` | 204,920 |
-| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_1.txt` | 184,830 |
-| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_18.txt` | 155,564 |
+| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_44.txt` | 1,568,528 |
+| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_47.txt` | 595,037 |
+| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_49.txt` | 237,284 |
+| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_29.txt` | 204,993 |
+| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_1.txt` | 184,894 |
+| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_18.txt` | 155,162 |
 | `https://adguardteam.github.io/HostlistsRegistry/assets/filter_21.txt` | 101,973 |
-| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_5.txt` | 56,135 |
-| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_30.txt` | 31,413 |
-| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_52.txt` | 15,600 |
-| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_11.txt` | 2,393 |
+| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_5.txt` | 56,093 |
+| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_30.txt` | 31,003 |
+| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_52.txt` | 16,249 |
+| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_11.txt` | 2,385 |
 | `https://adguardteam.github.io/HostlistsRegistry/assets/filter_57.txt` | 1,379 |
 | `https://adguardteam.github.io/HostlistsRegistry/assets/filter_10.txt` | 940 |
 | `https://adguardteam.github.io/HostlistsRegistry/assets/filter_31.txt` | 901 |
@@ -43,43 +45,41 @@
 | `https://adguardteam.github.io/HostlistsRegistry/assets/filter_63.txt` | 384 |
 | `https://adguardteam.github.io/HostlistsRegistry/assets/filter_8.txt` | 307 |
 | `https://adguardteam.github.io/HostlistsRegistry/assets/filter_71.txt` | 46 |
-| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_47.txt` | 1 |
-| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_44.txt` | 1 |
 
 ## Category Distribution
 
 | Category | Count | Percentage |
 |----------|-------|------------|
-| other | 555,169 | 100.0% |
+| other | 2,556,213 | 100.0% |
 | comment | 1 | 0.0% |
 
 ## Top 20 TLDs
 
 | TLD | Count |
 |-----|-------|
-| .com | 247,354 |
-| .net | 30,354 |
-| .de | 18,494 |
-| .shop | 17,536 |
-| .site | 11,195 |
-| .cyou | 9,740 |
-| .br | 9,473 |
-| .org | 8,694 |
-| .app | 7,757 |
-| .sbs | 7,633 |
-| .cfd | 7,272 |
-| .online | 7,176 |
-| .fr | 6,517 |
-| .top | 6,492 |
-| .dev | 6,340 |
-| .cn | 6,314 |
-| .info | 6,123 |
-| .xyz | 5,880 |
-| .live | 5,242 |
-| .io | 5,059 |
+| .xyz | 749,959 |
+| .com | 731,255 |
+| .shop | 132,286 |
+| .top | 74,911 |
+| .net | 66,553 |
+| .online | 47,262 |
+| .org | 37,276 |
+| .info | 30,953 |
+| .buzz | 26,870 |
+| .cfd | 26,501 |
+| .site | 25,893 |
+| .sbs | 25,839 |
+| .click | 25,575 |
+| .de | 24,284 |
+| .casino | 22,652 |
+| .fr | 17,343 |
+| .icu | 17,189 |
+| .app | 16,916 |
+| .vip | 16,910 |
+| .cn | 16,864 |
 
 ## Type Distribution
 
-- **block:** 554,888 (99.9%) ███████████████████
-- **allow:** 281 (0.1%) 
+- **block:** 2,555,932 (100.0%) ███████████████████
+- **allow:** 281 (0.0%) 
 - **comment:** 1 (0.0%) 
