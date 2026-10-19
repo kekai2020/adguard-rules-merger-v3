@@ -1,25 +1,25 @@
 # AdGuard Rules Merge Report (V3)
 
-**Generated:** 2026-10-19 02:29:04 UTC
+**Generated:** 2026-10-19 11:37:13 UTC
 
 ## Summary
 
 | Metric | Value |
 |--------|-------|
-| Rules before dedup | 3,809,469 |
-| Rules after dedup | 2,941,258 |
-| Deduplication rate | 22.8% |
+| Rules before dedup | 3,397,320 |
+| Rules after dedup | 2,721,095 |
+| Deduplication rate | 19.9% |
 | Sources loaded | 18 / 18 |
 | Sources from cache | 2 |
-| Processing time | 33.29s |
+| Processing time | 27.81s |
 | Exact merges | 0 |
-| Normalized merges | 868,173 |
+| Normalized merges | 676,187 |
 | Wildcard removals | 2 |
 | Conflicts resolved | 36 |
 
 ### Rule Breakdown
 
-- **Block:** 2,940,976
+- **Block:** 2,720,813
 - **Allow:** 281
 - **Comment:** 1
 
@@ -27,19 +27,19 @@
 
 | Source | Rules contributed |
 |--------|-------------------|
-| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_44.txt` | 2,208,551 |
-| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_47.txt` | 599,518 |
-| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_49.txt` | 240,460 |
-| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_29.txt` | 206,035 |
-| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_1.txt` | 185,981 |
-| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_18.txt` | 153,588 |
+| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_44.txt` | 1,793,265 |
+| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_47.txt` | 601,821 |
+| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_49.txt` | 241,247 |
+| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_29.txt` | 206,165 |
+| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_1.txt` | 186,103 |
+| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_18.txt` | 153,424 |
 | `https://adguardteam.github.io/HostlistsRegistry/assets/filter_21.txt` | 102,330 |
-| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_5.txt` | 57,163 |
+| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_5.txt` | 57,284 |
 | `https://adguardteam.github.io/HostlistsRegistry/assets/filter_30.txt` | 29,608 |
-| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_52.txt` | 16,263 |
+| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_52.txt` | 16,133 |
 | `https://adguardteam.github.io/HostlistsRegistry/assets/filter_11.txt` | 2,004 |
 | `https://adguardteam.github.io/HostlistsRegistry/assets/filter_57.txt` | 1,380 |
-| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_10.txt` | 940 |
+| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_10.txt` | 934 |
 | `https://adguardteam.github.io/HostlistsRegistry/assets/filter_31.txt` | 901 |
 | `https://adguardteam.github.io/HostlistsRegistry/assets/filter_53.txt` | 899 |
 | `https://adguardteam.github.io/HostlistsRegistry/assets/filter_63.txt` | 384 |
@@ -50,36 +50,36 @@
 
 | Category | Count | Percentage |
 |----------|-------|------------|
-| other | 2,941,257 | 100.0% |
+| other | 2,721,094 | 100.0% |
 | comment | 1 | 0.0% |
 
 ## Top 20 TLDs
 
 | TLD | Count |
 |-----|-------|
-| .xyz | 1,000,107 |
-| .com | 762,416 |
-| .shop | 161,749 |
-| .top | 83,485 |
-| .net | 68,954 |
-| .online | 49,312 |
-| .org | 38,917 |
-| .cfd | 37,725 |
-| .info | 32,616 |
-| .click | 31,589 |
-| .site | 27,849 |
-| .buzz | 27,156 |
-| .sbs | 26,723 |
-| .de | 24,793 |
-| .casino | 22,659 |
-| .icu | 21,566 |
-| .vip | 19,244 |
-| .cn | 18,596 |
-| .fr | 18,136 |
-| .app | 17,450 |
+| .xyz | 827,661 |
+| .com | 751,481 |
+| .shop | 159,576 |
+| .top | 81,926 |
+| .net | 68,363 |
+| .online | 47,319 |
+| .org | 38,041 |
+| .info | 31,045 |
+| .cfd | 27,674 |
+| .site | 27,409 |
+| .buzz | 26,884 |
+| .click | 26,811 |
+| .sbs | 25,616 |
+| .de | 25,250 |
+| .casino | 22,420 |
+| .icu | 21,340 |
+| .fr | 18,141 |
+| .vip | 17,656 |
+| .cn | 17,435 |
+| .app | 17,375 |
 
 ## Type Distribution
 
-- **block:** 2,940,976 (100.0%) ███████████████████
+- **block:** 2,720,813 (100.0%) ███████████████████
 - **allow:** 281 (0.0%) 
 - **comment:** 1 (0.0%) 
