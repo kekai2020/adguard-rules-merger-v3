@@ -1,35 +1,35 @@
 {
-  "generated_at": "2026-10-29T03:34:54.557730+00:00",
+  "generated_at": "2026-10-29T11:59:49.277378+00:00",
   "summary": {
-    "total_before": 3685965,
-    "total_after": 2954103,
-    "dedup_rate": 19.855370303299136,
-    "block_count": 2953820,
+    "total_before": 3686648,
+    "total_after": 2956141,
+    "dedup_rate": 19.814937580154112,
+    "block_count": 2955858,
     "allow_count": 282,
     "comment_count": 1,
-    "elapsed_time": 33.32909035682678,
+    "elapsed_time": 34.25436449050903,
     "sources_ok": 18,
     "sources_total": 18,
     "sources_cached": 1,
     "exact_merged": 0,
     "wildcard_removed": 2,
     "conflict_resolved": 36,
-    "normalized_merged": 731824
+    "normalized_merged": 730469
   },
   "per_source": {
-    "https://adguardteam.github.io/HostlistsRegistry/assets/filter_44.txt": 2065643,
-    "https://adguardteam.github.io/HostlistsRegistry/assets/filter_47.txt": 621187,
-    "https://adguardteam.github.io/HostlistsRegistry/assets/filter_49.txt": 248735,
-    "https://adguardteam.github.io/HostlistsRegistry/assets/filter_29.txt": 204845,
-    "https://adguardteam.github.io/HostlistsRegistry/assets/filter_1.txt": 184706,
-    "https://adguardteam.github.io/HostlistsRegistry/assets/filter_18.txt": 150283,
+    "https://adguardteam.github.io/HostlistsRegistry/assets/filter_44.txt": 2062780,
+    "https://adguardteam.github.io/HostlistsRegistry/assets/filter_47.txt": 623752,
+    "https://adguardteam.github.io/HostlistsRegistry/assets/filter_49.txt": 249407,
+    "https://adguardteam.github.io/HostlistsRegistry/assets/filter_29.txt": 204941,
+    "https://adguardteam.github.io/HostlistsRegistry/assets/filter_1.txt": 184817,
+    "https://adguardteam.github.io/HostlistsRegistry/assets/filter_18.txt": 150215,
     "https://adguardteam.github.io/HostlistsRegistry/assets/filter_21.txt": 100123,
-    "https://adguardteam.github.io/HostlistsRegistry/assets/filter_5.txt": 59685,
+    "https://adguardteam.github.io/HostlistsRegistry/assets/filter_5.txt": 59847,
     "https://adguardteam.github.io/HostlistsRegistry/assets/filter_30.txt": 24976,
-    "https://adguardteam.github.io/HostlistsRegistry/assets/filter_52.txt": 16329,
+    "https://adguardteam.github.io/HostlistsRegistry/assets/filter_52.txt": 16334,
     "https://adguardteam.github.io/HostlistsRegistry/assets/filter_11.txt": 1773,
     "https://adguardteam.github.io/HostlistsRegistry/assets/filter_57.txt": 1382,
-    "https://adguardteam.github.io/HostlistsRegistry/assets/filter_10.txt": 926,
+    "https://adguardteam.github.io/HostlistsRegistry/assets/filter_10.txt": 938,
     "https://adguardteam.github.io/HostlistsRegistry/assets/filter_53.txt": 910,
     "https://adguardteam.github.io/HostlistsRegistry/assets/filter_31.txt": 902,
     "https://adguardteam.github.io/HostlistsRegistry/assets/filter_63.txt": 384,
@@ -37,7 +37,7 @@
     "https://adguardteam.github.io/HostlistsRegistry/assets/filter_71.txt": 46
   },
   "per_category": {
-    "other": 2954102,
+    "other": 2956140,
     "comment": 1
   }
 }
