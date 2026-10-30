@@ -1,25 +1,25 @@
 # AdGuard Rules Merge Report (V3)
 
-**Generated:** 2026-10-30 03:37:24 UTC
+**Generated:** 2026-10-30 11:53:34 UTC
 
 ## Summary
 
 | Metric | Value |
 |--------|-------|
-| Rules before dedup | 3,686,677 |
-| Rules after dedup | 2,956,426 |
-| Deduplication rate | 19.8% |
+| Rules before dedup | 3,510,700 |
+| Rules after dedup | 2,788,205 |
+| Deduplication rate | 20.6% |
 | Sources loaded | 18 / 18 |
 | Sources from cache | 1 |
-| Processing time | 26.02s |
+| Processing time | 22.03s |
 | Exact merges | 0 |
-| Normalized merges | 730,213 |
+| Normalized merges | 722,458 |
 | Wildcard removals | 2 |
-| Conflicts resolved | 36 |
+| Conflicts resolved | 35 |
 
 ### Rule Breakdown
 
-- **Block:** 2,956,143
+- **Block:** 2,787,922
 - **Allow:** 282
 - **Comment:** 1
 
@@ -27,19 +27,19 @@
 
 | Source | Rules contributed |
 |--------|-------------------|
-| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_44.txt` | 2,062,780 |
-| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_47.txt` | 623,752 |
-| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_49.txt` | 249,407 |
-| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_29.txt` | 205,251 |
-| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_1.txt` | 185,077 |
-| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_18.txt` | 149,983 |
+| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_44.txt` | 1,852,751 |
+| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_47.txt` | 624,565 |
+| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_49.txt` | 282,345 |
+| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_29.txt` | 205,333 |
+| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_1.txt` | 185,204 |
+| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_18.txt` | 150,028 |
 | `https://adguardteam.github.io/HostlistsRegistry/assets/filter_21.txt` | 100,123 |
 | `https://adguardteam.github.io/HostlistsRegistry/assets/filter_5.txt` | 59,950 |
 | `https://adguardteam.github.io/HostlistsRegistry/assets/filter_30.txt` | 24,511 |
-| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_52.txt` | 16,334 |
+| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_52.txt` | 16,379 |
 | `https://adguardteam.github.io/HostlistsRegistry/assets/filter_11.txt` | 1,837 |
 | `https://adguardteam.github.io/HostlistsRegistry/assets/filter_57.txt` | 1,382 |
-| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_10.txt` | 938 |
+| `https://adguardteam.github.io/HostlistsRegistry/assets/filter_10.txt` | 934 |
 | `https://adguardteam.github.io/HostlistsRegistry/assets/filter_53.txt` | 910 |
 | `https://adguardteam.github.io/HostlistsRegistry/assets/filter_31.txt` | 902 |
 | `https://adguardteam.github.io/HostlistsRegistry/assets/filter_63.txt` | 384 |
@@ -50,36 +50,36 @@
 
 | Category | Count | Percentage |
 |----------|-------|------------|
-| other | 2,956,425 | 100.0% |
+| other | 2,788,204 | 100.0% |
 | comment | 1 | 0.0% |
 
 ## Top 20 TLDs
 
 | TLD | Count |
 |-----|-------|
-| .xyz | 866,975 |
-| .com | 826,099 |
-| .shop | 172,130 |
-| .top | 90,528 |
-| .net | 72,323 |
-| .online | 48,888 |
-| .org | 43,536 |
-| .click | 43,178 |
-| .sbs | 35,542 |
-| .info | 35,359 |
-| .site | 30,212 |
-| .buzz | 28,375 |
-| .cfd | 27,563 |
-| .de | 26,699 |
-| .icu | 23,126 |
-| .casino | 22,376 |
-| .cc | 20,414 |
-| .vip | 18,960 |
-| .app | 18,328 |
-| .pro | 18,285 |
+| .xyz | 853,082 |
+| .com | 764,625 |
+| .shop | 166,404 |
+| .top | 82,995 |
+| .net | 69,618 |
+| .online | 47,716 |
+| .org | 40,163 |
+| .click | 34,983 |
+| .info | 30,041 |
+| .site | 29,499 |
+| .buzz | 27,723 |
+| .sbs | 26,983 |
+| .cfd | 26,450 |
+| .de | 26,340 |
+| .casino | 22,420 |
+| .icu | 21,745 |
+| .app | 19,643 |
+| .fr | 18,664 |
+| .vip | 16,796 |
+| .pro | 16,370 |
 
 ## Type Distribution
 
-- **block:** 2,956,143 (100.0%) ███████████████████
+- **block:** 2,787,922 (100.0%) ███████████████████
 - **allow:** 282 (0.0%) 
 - **comment:** 1 (0.0%) 
